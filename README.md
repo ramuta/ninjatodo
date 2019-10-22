@@ -8,5 +8,6 @@ A self-hosted task management system.
 - Bootstrap
 - Python 3
 - Flask
-- JavaScript (no framework, just plain vanilla JS)
+- JavaScript & jQuery
 - Google App Engine
+- Datastore
