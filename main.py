@@ -1,11 +1,17 @@
 import os
 from flask import Flask
-from handlers import public
+from handlers import public, admin
 
 app = Flask(__name__)
 
-# URLs
-app.add_url_rule(rule="/", endpoint="index", view_func=public.index, methods=["GET", "POST"])
+# URL ROUTES:
+
+# public
+app.add_url_rule(rule="/", endpoint="public.index", view_func=public.index, methods=["GET", "POST"])
+app.add_url_rule(rule="/login", endpoint="public.login", view_func=public.login, methods=["GET", "POST"])
+
+# admin
+app.add_url_rule(rule="/admin", endpoint="admin.main", view_func=admin.main, methods=["GET", "POST"])
 
 
 if __name__ == '__main__':

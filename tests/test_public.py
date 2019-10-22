@@ -22,3 +22,8 @@ def cleanup():
 def test_index_page(client):
     response = client.get('/')
     assert b'When you need TODO' in response.data
+
+
+def test_login_page(client):
+    response = client.get('/')
+    assert b'Login' in response.data
