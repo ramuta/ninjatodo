@@ -3,3 +3,4 @@ mock
 google-auth
 pytest
 google-cloud-ndb
+bcrypt

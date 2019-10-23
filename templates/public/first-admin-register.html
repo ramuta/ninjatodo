@@ -1,0 +1,42 @@
+{% extends "public/base.html" %}
+
+{% block title %}Admin registration{% endblock title %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Admin registration</h1>
+
+    <p>
+        Looks like your web app does not have any admin yet. Which means that you can be the first one!
+    </p>
+
+    <p>How exciting, right?</p>
+
+    <p>
+        Please fill out the form below and you'll become the first admin of this web app. :)
+    </p>
+
+    <div class="row">
+        <div class="col-md-6">
+            <form method="post">
+                <div class="form-group">
+                    <label for="usernameInput">Username</label>
+                    <input type="text" class="form-control" id="usernameInput" placeholder="Enter username" name="first-admin-username">
+                </div>
+
+                <div class="form-group">
+                    <label for="passwordInput">Password</label>
+                    <input type="password" class="form-control" id="passwordInput" placeholder="Password" name="first-admin-password">
+                </div>
+
+                <div class="form-group">
+                    <label for="repeatInput">Repeat password</label>
+                    <input type="password" class="form-control" id="repeatInput" placeholder="Repeat password" name="first-admin-repeat">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}
