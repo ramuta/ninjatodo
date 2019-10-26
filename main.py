@@ -2,7 +2,7 @@ import os
 from flask import Flask
 from handlers import public, admin
 
-app = Flask(__name__)
+app = Flask(__name__) 
 
 # URL ROUTES:
 

@@ -1,4 +1,6 @@
-from flask import render_template, request, redirect, url_for
+import os
+
+from flask import render_template, request, redirect, url_for, abort, make_response
 
 from models.user import User
 
@@ -8,7 +10,39 @@ def index():
 
 
 def login():
-    return render_template("public/login.html")
+    if request.method == "GET":
+        return render_template("public/login.html")
+
+    elif request.method == "POST":
+        username = request.form.get("login-username")
+        password = request.form.get("login-password")
+
+        if username and password:
+            # find a User with this username (if it doesn't exist: 404)
+            user = User.get_by_username(username=username)
+
+            if not user:
+                return abort(404)
+
+            # check if passwords match (if not: 403)
+            if User.is_password_valid(user=user, password=password):
+                # if passwords match, generate a session token and save its hash in the database
+                session_token = User.generate_session_token(user=user, request=request)
+
+                # prepare a response and then store the token in a cookie
+                response = make_response(redirect(url_for("public.index")))
+
+                # on localhost don't make the cookie secure and http-only (but on production it should be)
+                cookie_secure_httponly = False
+                if os.getenv('GAE_ENV', '').startswith('standard'):
+                    cookie_secure_httponly = True
+
+                # store the token in a cookie
+                response.set_cookie(key="ninja-todo-session", value=session_token, secure=cookie_secure_httponly,
+                                    httponly=cookie_secure_httponly)
+                return response
+
+        return abort(403)
 
 
 def first_admin_registration():
@@ -22,6 +56,7 @@ def first_admin_registration():
     # if such user does not exist, enable the option to set the first admin via first-admin-register.html
     if request.method == "GET":
         return render_template("public/first-admin-register.html")
+
     elif request.method == "POST":
         username = request.form.get("first-admin-username")
         password = request.form.get("first-admin-password")
