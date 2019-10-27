@@ -2,8 +2,47 @@
 
 {% block title %}Profile{% endblock title %}
 
+{% block scripts %}
+<script>
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+</script>
+{% endblock scripts %}
+
 {% block content %}
 <div class="container mt-4">
     <h1>My profile</h1>
+
+    <h3 class="mt-2">Sessions</h3>
+    <table class="table table-dark mt-4 text-center">
+        <tr>
+            <th>Session ID</th>
+            <th>Platform</th>
+            <th>IP</th>
+            <th>Browser</th>
+            <th>Location</th>
+            <th>Expires</th>
+            <th>Tools</th>
+        </tr>
+
+        {% for session in user.sessions %}
+        <tr>
+            <td data-toggle="tooltip" data-placement="top" title="{{ session.user_agent }}">
+                {{ session.token_hash|truncate(5, end='') }}
+            </td>
+
+            <td>{{ session.platform }}</td>
+            <td>{{ session.ip }}</td>
+            <td>{{ session.browser }}</td>
+            <td>{{ session.city }}, {{ session.country }}</td>
+            <td>{{ session.expired.strftime("%d %b %Y") }}</td>
+
+            <td>
+                <button class="btn btn-danger btn-sm">Delete</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
 </div>
 {% endblock content %}

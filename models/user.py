@@ -15,6 +15,8 @@ class Session(ndb.Model):
     ip = ndb.StringProperty()
     platform = ndb.StringProperty()
     browser = ndb.StringProperty()
+    city = ndb.StringProperty()
+    country = ndb.StringProperty()
     user_agent = ndb.StringProperty()
     expired = ndb.DateTimeProperty()
 
@@ -105,6 +107,8 @@ class User(ndb.Model):
                 session.platform = request.user_agent.platform
                 session.browser = request.user_agent.browser
                 session.user_agent = request.user_agent.string
+                session.country = request.headers.get("X-AppEngine-Country")
+                session.city = request.headers.get("X-AppEngine-City")
 
             # store the session in the User model
             if not user.sessions:
