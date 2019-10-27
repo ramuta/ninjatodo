@@ -1,8 +1,7 @@
 import datetime
 import functools
 
-from flask import request, abort, url_for
-from werkzeug.utils import redirect
+from flask import request, abort, url_for, redirect
 
 from models.user import User
 
