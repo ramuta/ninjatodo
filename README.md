@@ -2,6 +2,8 @@
 
 A self-hosted task management system.
 
+![](static/img/preview.png)
+
 ## Tech stack
 
 - HTML & CSS
@@ -60,3 +62,7 @@ Then you can run the Datastore Viewer using this command:
 
 Datastore Viewer will run on [http://127.0.0.1:8082/](http://127.0.0.1:8082/). Enter `test` as the project name and 
 you'll see the data in your Datastore.
+
+## Known issues
+
+Tests can sometimes fail even though they are correct. It's probably due to the Datastore Emulator lag.

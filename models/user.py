@@ -92,16 +92,19 @@ class User(ndb.Model):
                 return False
 
     @classmethod
-    def generate_session_token(cls, user, request):
+    def generate_session_token(cls, user, request=None):
         with client.context():
             # generate session token and its hash
             token = secrets.token_hex()
             token_hash = hashlib.sha256(str.encode(token)).hexdigest()
 
             # create a session
-            session = Session(token_hash=token_hash, ip=request.remote_addr, platform=request.user_agent.platform,
-                              browser=request.user_agent.browser, user_agent=request.user_agent.string,
-                              expired=(datetime.datetime.now() + datetime.timedelta(days=30)))
+            session = Session(token_hash=token_hash, expired=(datetime.datetime.now() + datetime.timedelta(days=30)))
+            if request:  # this separation is needed for tests which don't have the access to "request" variable
+                session.ip = request.remote_addr
+                session.platform = request.user_agent.platform
+                session.browser = request.user_agent.browser
+                session.user_agent = request.user_agent.string
 
             # store the session in the User model
             if not user.sessions:

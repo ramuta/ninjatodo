@@ -1,8 +1,8 @@
 import os
 from flask import Flask
-from handlers import public, admin, tasks
+from handlers import public, admin, tasks, profile
 
-app = Flask(__name__) 
+app = Flask(__name__)
 
 # URL ROUTES:
 
@@ -14,6 +14,9 @@ app.add_url_rule(rule="/first-admin", endpoint="public.first_admin", view_func=p
 
 # tasks
 app.add_url_rule(rule="/tasks", endpoint="tasks.my_tasks", view_func=tasks.my_tasks, methods=["GET"])
+
+# profile
+app.add_url_rule(rule="/profile", endpoint="profile.main", view_func=profile.main, methods=["GET"])
 
 # admin
 app.add_url_rule(rule="/admin", endpoint="admin.main", view_func=admin.main, methods=["GET"])
