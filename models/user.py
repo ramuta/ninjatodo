@@ -1,4 +1,5 @@
 import datetime
+import hashlib
 import secrets
 
 import bcrypt
@@ -60,6 +61,20 @@ class User(ndb.Model):
             return user
 
     @classmethod
+    def get_by_session_token(cls, session_token):
+        with client.context():
+            token_hash = hashlib.sha256(str.encode(session_token)).hexdigest()
+
+            user = cls.query(cls.sessions.token_hash == token_hash).get()
+
+            for session in user.sessions:
+                if session.token_hash == token_hash:
+                    if session.expired > datetime.datetime.now():
+                        return user
+
+            return None
+
+    @classmethod
     def is_password_valid(cls, user, password):
         if bcrypt.checkpw(password=str.encode(password), hashed_password=str.encode(user.password_hash)):
             return True
@@ -81,7 +96,7 @@ class User(ndb.Model):
         with client.context():
             # generate session token and its hash
             token = secrets.token_hex()
-            token_hash = bcrypt.hashpw(password=str.encode(token), salt=bcrypt.gensalt(12))
+            token_hash = hashlib.sha256(str.encode(token)).hexdigest()
 
             # create a session
             session = Session(token_hash=token_hash, ip=request.remote_addr, platform=request.user_agent.platform,
