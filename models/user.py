@@ -103,7 +103,7 @@ class User(ndb.Model):
             # create a session
             session = Session(token_hash=token_hash, expired=(datetime.datetime.now() + datetime.timedelta(days=30)))
             if request:  # this separation is needed for tests which don't have the access to "request" variable
-                session.ip = request.remote_addr
+                session.ip = request.access_route[-1]
                 session.platform = request.user_agent.platform
                 session.browser = request.user_agent.browser
                 session.user_agent = request.user_agent.string
