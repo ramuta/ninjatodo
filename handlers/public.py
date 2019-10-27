@@ -30,7 +30,7 @@ def login():
                 session_token = User.generate_session_token(user=user, request=request)
 
                 # prepare a response and then store the token in a cookie
-                response = make_response(redirect(url_for("public.index")))
+                response = make_response(redirect(url_for("tasks.my_tasks")))
 
                 # on localhost don't make the cookie secure and http-only (but on production it should be)
                 cookie_secure_httponly = False

@@ -48,8 +48,6 @@ For tests run the following (in separate Terminal tabs):
     
     export TESTING=yes && pytest -p no:warnings
 
-
-
 ## See the data in Datastore locally
 
 If you'd like to see what data are stored in the localhost Datastore emulator, install [Datastore Viewer](https://github.com/gumo-py/datastore-viewer):
