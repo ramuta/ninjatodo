@@ -3,15 +3,18 @@ import os
 from flask import render_template, request, redirect, url_for, abort, make_response
 
 from models.user import User
+from utils.decorators import public_handler
 
 
-def index():
-    return render_template("public/index.html")
+@public_handler
+def index(**params):
+    return render_template("public/index.html", **params)
 
 
-def login():
+@public_handler
+def login(**params):
     if request.method == "GET":
-        return render_template("public/login.html")
+        return render_template("public/login.html", **params)
 
     elif request.method == "POST":
         username = request.form.get("login-username")
@@ -45,7 +48,8 @@ def login():
         return abort(403)
 
 
-def first_admin_registration():
+@public_handler
+def first_admin_registration(**params):
     # this handler is needed only to set the first user/admin of the web app, so that the user can invite others
     # to the app (there's no registration system because the app is not open to just anyone).
 
@@ -55,7 +59,7 @@ def first_admin_registration():
 
     # if such user does not exist, enable the option to set the first admin via first-admin-register.html
     if request.method == "GET":
-        return render_template("public/first-admin-register.html")
+        return render_template("public/first-admin-register.html", **params)
 
     elif request.method == "POST":
         username = request.form.get("first-admin-username")
@@ -65,4 +69,4 @@ def first_admin_registration():
         if username and password and password == repeat:
             user = User.create(username=username, password=password, admin=True)
 
-            return render_template("public/first-admin-success.html")
+            return render_template("public/first-admin-success.html", **params)

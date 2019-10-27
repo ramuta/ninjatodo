@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>{% block title %}{% endblock title %} | Self-hosted TODO</title>
+    <title>{% block title %}{% endblock title %} | NinjaTODO</title>
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -17,16 +17,32 @@
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <a class="navbar-brand" href="{{ url_for('public.index') }}">Self-hosted TODO</a>
+  <a class="navbar-brand" href="{{ url_for('public.index') }}">NinjaTODO</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav ml-auto">
+      {% if user %}
+      <li class="nav-item">
+        <span class="nav-link">Hello, {{ user.username }}</span>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('tasks.my_tasks') }}">Tasks</a>
+      </li>
+
+          {% if user.admin %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('admin.main') }}">Admin</a>
+          </li>
+          {% endif %}
+      {% else %}
       <li class="nav-item">
         <a class="nav-link" href="{{ url_for('public.login') }}">Login</a>
       </li>
+      {% endif %}
     </ul>
 
   </div>
@@ -34,6 +50,12 @@
 
 {% block content %}
 {% endblock content %}
+
+<hr>
+
+<footer class="text-center">
+    NinjaTODO &copy; {{ now.year }}
+</footer>
 
 <!-- JavaScript -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

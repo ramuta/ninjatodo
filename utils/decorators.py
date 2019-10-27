@@ -1,40 +1,63 @@
+import datetime
 import functools
-import logging
 
-from flask import request, abort
+from flask import request, abort, url_for
+from werkzeug.utils import redirect
 
 from models.user import User
 
 
-def login_required(func):
+def public_handler(func):
     @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        logging.warning("BLA BLA BLA")
-        logging.warning("{}".format(request.cookies.get("ninja-todo-session")))
-
+    def wrapper(**params):
         session_token = request.cookies.get("ninja-todo-session")
 
-        if User.get_by_session_token(session_token=session_token):
-            return func(*args, **kwargs)
-        else:
-            return abort(403)
+        params["now"] = datetime.datetime.now()  # send current date to handler and HTML template
+
+        if session_token:
+            user = User.get_by_session_token(session_token=session_token)
+            params["user"] = user
+
+        return func(**params)
+
+    return wrapper
+
+
+def login_required(func):
+    @functools.wraps(func)
+    def wrapper(**params):
+        session_token = request.cookies.get("ninja-todo-session")
+
+        params["now"] = datetime.datetime.now()  # send current date to handler and HTML template
+
+        if session_token:
+            user = User.get_by_session_token(session_token=session_token)
+            params["user"] = user
+
+            if user:
+                return func(**params)
+
+        return redirect(url_for("public.login"))
 
     return wrapper
 
 
 def admin_required(func):
     @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        logging.warning("BLA BLA BLA")
-        logging.warning("{}".format(request.cookies.get("ninja-todo-session")))
-
+    def wrapper(**params):
         session_token = request.cookies.get("ninja-todo-session")
 
-        user = User.get_by_session_token(session_token=session_token)
+        params["now"] = datetime.datetime.now()  # send current date to handler and HTML template
 
-        if user.admin:
-            return func(*args, **kwargs)
-        else:
-            return abort(403)
+        if session_token:
+            user = User.get_by_session_token(session_token=session_token)
+            params["user"] = user
+
+            if user and user.admin:
+                return func(**params)
+            elif user:
+                return abort(403)
+
+        return redirect(url_for("public.login"))
 
     return wrapper
