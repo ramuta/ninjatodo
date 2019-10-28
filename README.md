@@ -27,10 +27,11 @@ When you run the app the first time, there's no user (or admin) in the system ye
 After the first user is created (and set as admin), the `/first-admin` URL will not work anymore (it will redirect to 
 the main/index page).
 
-## Running the app
+## Running the app via run.py (recommended)
 
-Use **run.py** to run the web app or the tests. Right click on this file in PyCharm and select Run. Alternatively, you 
-can run it via the terminal using `python run.py`.
+Use **run.py** to run the web app or the tests. 
+
+Right click on this file in PyCharm and select Run. Alternatively, you can run it via the terminal using `python run.py`.
 
 ### Running manually
 
@@ -41,14 +42,23 @@ To run the web app, use these two commands:
     # first run the datastore emulator and wait until it starts
     gcloud beta emulators datastore start --no-legacy --data-dir=. --project test --host-port "localhost:8001"
     
-    # in a new terminal tab start the web app
+    # in a new terminal tab start the web app:
+    
+    # mac & linux
     export FLASK_APP=main.py && flask run --host localhost --port 8080 --reload
+    
+    # windows
+    set FLASK_APP=main.py && flask run --host localhost --port 8080 --reload
 
 For tests run the following (in separate Terminal tabs):
 
     gcloud beta emulators datastore start --no-legacy --no-store-on-disk --project test --host-port "localhost:8002"
     
+    # mac & linux:
     export TESTING=yes && pytest -p no:warnings
+    
+    # windows
+    set TESTING=yes && pytest -p no:warnings
 
 ## See the data in Datastore locally
 
@@ -58,7 +68,11 @@ If you'd like to see what data are stored in the localhost Datastore emulator, i
 
 Then you can run the Datastore Viewer using this command:
 
-    export DATASTORE_EMULATOR_HOST=localhost:8001 && datastore-viewer 
+    # mac & linux:
+    export DATASTORE_EMULATOR_HOST=localhost:8001 && datastore-viewer
+    
+    # windows
+    set DATASTORE_EMULATOR_HOST=localhost:8001 && datastore-viewer
 
 Datastore Viewer will run on [http://127.0.0.1:8082/](http://127.0.0.1:8082/). Enter `test` as the project name and 
 you'll see the data in your Datastore.
