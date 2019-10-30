@@ -17,6 +17,8 @@ app.add_url_rule(rule="/tasks", endpoint="tasks.my_tasks", view_func=tasks.my_ta
 
 # profile
 app.add_url_rule(rule="/profile", endpoint="profile.main", view_func=profile.main, methods=["GET"])
+app.add_url_rule(rule="/profile/session/delete", endpoint="profile.session_delete", view_func=profile.session_delete,
+                 methods=["POST"])
 
 # admin
 app.add_url_rule(rule="/admin", endpoint="admin.main", view_func=admin.main, methods=["GET"])

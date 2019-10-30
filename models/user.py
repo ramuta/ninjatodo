@@ -69,6 +69,9 @@ class User(ndb.Model):
 
             user = cls.query(cls.sessions.token_hash == token_hash).get()
 
+            if not user:
+                return None
+
             for session in user.sessions:
                 if session.token_hash == token_hash:
                     if session.expired > datetime.datetime.now():
@@ -119,3 +122,18 @@ class User(ndb.Model):
             user.put()
 
             return token
+
+    @classmethod
+    def delete_session(cls, user, token_hash_five_chars):
+        with client.context():
+            valid_sessions = []
+            for session in user.sessions:
+                # delete session that has token hash that starts with these 5 characters
+                # (delete by not including in the new sessions list)
+                if not session.token_hash.startswith(token_hash_five_chars):
+                    valid_sessions.append(session)
+
+            user.sessions = valid_sessions
+            user.put()
+
+        return user
