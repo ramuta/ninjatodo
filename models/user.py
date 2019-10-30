@@ -3,7 +3,7 @@ import hashlib
 import secrets
 
 import bcrypt
-
+from operator import attrgetter
 from google.cloud import ndb
 from models.db_settings import get_db
 
@@ -21,6 +21,12 @@ class Session(ndb.Model):
     expired = ndb.DateTimeProperty()
 
 
+class CSRFToken(ndb.Model):
+    """CSRF token (also called XSRF) is a mechanism that prevents CSRF attacks."""
+    token = ndb.StringProperty()
+    expired = ndb.DateTimeProperty()
+
+
 class User(ndb.Model):
     first_name = ndb.StringProperty()
     last_name = ndb.StringProperty()
@@ -31,6 +37,7 @@ class User(ndb.Model):
     admin = ndb.BooleanProperty(default=False)
     suspended = ndb.BooleanProperty(default=False)
     sessions = ndb.StructuredProperty(Session, repeated=True)
+    csrf_tokens = ndb.StructuredProperty(CSRFToken, repeated=True)  # there should be max 10 CSRF tokens stored
 
     # standard model fields
     created = ndb.DateTimeProperty(auto_now_add=True)  # use https://github.com/miguelgrinberg/Flask-Moment
@@ -137,3 +144,29 @@ class User(ndb.Model):
             user.put()
 
         return user
+
+    @classmethod
+    def set_csrf_token(cls, user):
+        with client.context():
+            # first delete expired tokens from the CSRF tokens list in the user object
+            valid_tokens = []
+            for csrf in user.csrf_tokens:
+                if csrf.expired > datetime.datetime.now():
+                    valid_tokens.append(csrf)
+
+            # check how many csrf tokens are still left in the User object (should be 10 or less)
+            # if more than 10, delete the oldest one (with the closest expired date)
+            if len(valid_tokens) >= 10:
+                oldest_token = min(valid_tokens, key=attrgetter("expired"))
+                valid_tokens.remove(oldest_token)
+
+            # then create a new CSRF token and enter it in the tokens list
+            token = secrets.token_hex()
+            csrf_object = CSRFToken(token=token, expired=(datetime.datetime.now() + datetime.timedelta(hours=8)))
+            valid_tokens.append(csrf_object)
+
+            # finally, store the new tokens list back in the user model
+            user.csrf_tokens = valid_tokens
+            user.put()
+
+            return token
