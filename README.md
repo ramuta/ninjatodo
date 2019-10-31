@@ -40,7 +40,7 @@ You can run everything manually without using run.py.
 To run the web app, use these two commands:
 
     # first run the datastore emulator and wait until it starts
-    gcloud beta emulators datastore start --no-legacy --data-dir=. --project test --host-port "localhost:8001"
+    gcloud beta emulators datastore start --consistency=1 --data-dir=. --project test --host-port "localhost:8001"
     
     # in a new terminal tab start the web app:
     
@@ -52,7 +52,7 @@ To run the web app, use these two commands:
 
 For tests run the following (in separate Terminal tabs):
 
-    gcloud beta emulators datastore start --no-legacy --no-store-on-disk --project test --host-port "localhost:8002"
+    gcloud beta emulators datastore start --consistency=1 --no-store-on-disk --project test --host-port "localhost:8002"
     
     # mac & linux:
     export TESTING=yes && pytest -p no:warnings
@@ -76,7 +76,3 @@ Then you can run the Datastore Viewer using this command:
 
 Datastore Viewer will run on [http://127.0.0.1:8082/](http://127.0.0.1:8082/). Enter `test` as the project name and 
 you'll see the data in your Datastore.
-
-## Known issues
-
-Tests can sometimes fail even though they are correct. It's probably due to the Datastore Emulator lag.

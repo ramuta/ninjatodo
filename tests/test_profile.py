@@ -27,5 +27,12 @@ def cleanup():
 
 
 def test_profile_main(client):
+    user = User.get_by_username(username="testman")
+    assert user is not None
+
     response = client.get('/profile')
+
     assert b'My profile' in response.data
+    assert b'Delete' in response.data  # if there's at least one session on the list, there's also a Delete button
+    # check if session token hash (first five chars) is in the sessions list (as session ID)
+    assert str.encode("{}".format(user.sessions[0].token_hash[:5])) in response.data

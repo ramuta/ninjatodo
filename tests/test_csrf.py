@@ -77,3 +77,16 @@ def test_set_csrf_token_3(client):
 
     # assert that the youngest created token is still in the csrf list
     assert next((x for x in user.csrf_tokens if x.token == youngest_token), None) is not None
+
+
+def test_validate_csrf_token(client):
+    # create a user
+    user = User.get_by_username(username="testman")
+    assert user is not None
+
+    # create a CSRF token
+    token = User.set_csrf_token(user)
+    assert user.csrf_tokens != []
+
+    # validate the token
+    assert User.is_csrf_token_valid(user=user, csrf_token=token) is True
