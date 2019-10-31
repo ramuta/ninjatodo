@@ -170,3 +170,21 @@ class User(ndb.Model):
             user.put()
 
             return token
+
+    @classmethod
+    def is_csrf_token_valid(cls, user, csrf_token):
+        with client.context():
+            token_validity = False
+
+            unused_tokens = []
+            for csrf in user.csrf_tokens:  # loop through user's CSRF tokens
+                if csrf.token == csrf_token:  # if tokens match, set validity to True
+                    token_validity = True
+                else:
+                    unused_tokens.append(csrf)  # if not, add CSRF token to the unused_tokens list
+
+            if unused_tokens != user.csrf_tokens:
+                user.csrf_tokens = unused_tokens
+                user.put()
+
+            return token_validity

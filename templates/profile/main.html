@@ -72,6 +72,7 @@ $(function () {
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                             <form method="post" action="/profile/session/delete">
                                 <input type="hidden" name="delete-session-token" value="{{ session.token_hash|truncate(5, end='') }}">
+                                <input type="hidden" name="csrf" value="{{ csrf }}">
                                 <button type="submit" class="btn btn-danger">Delete</button>
                             </form>
                         </div>
